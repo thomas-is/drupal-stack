@@ -41,10 +41,12 @@ RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
 
 COPY ./ng-default.conf /etc/nginx/http.d/default.conf
 
-RUN pass=$( N=16 ; cat /dev/urandom | tr -dc A-Za-z0-9 | head -c$N ); \
-  printf "%s\n%s\n" $pass $pass | adduser drupal
+RUN pass=$( N=16 ; cat /dev/urandom | tr -dc A-Za-z0-9 | head -c$N ) \
+  && printf "%s\n%s\n" $pass $pass | adduser drupal \
+  && mkdir -p /srv/drupal \
+  && chown drupal:drupal /srv/drupal
 
-WORKDIR /srv
+WORKDIR /srv/drupal
 
 EXPOSE 80
 
