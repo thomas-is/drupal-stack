@@ -20,14 +20,16 @@ usermod -u $DRUPAL_USER -g $DRUPAL_USER drupal
 pass=$( N=16 ; cat /dev/urandom | tr -dc A-Za-z0-9 | head -c$N )
 printf "%s\n%s\n" $pass $pass | passwd drupal
 
-# start php-fpm
-php-fpm81 --allow-to-run-as-root
-
 # create project if /srv/drupal does not exist
 if [ "$( ls /srv/drupal 2>/dev/null )" = "" ] ; then
   mkdir -p /srv/drupal
   chown $DRUPAL_USER:$DRUPAL_USER /srv/drupal
   su drupal -c "composer create-project --no-interaction drupal/recommended-project /srv/drupal"
 fi
+
+# start php-fpm
+php-fpm81 --allow-to-run-as-root
+
+echo "End of Entrypoint"
 
 exec "$@"
