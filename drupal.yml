@@ -9,8 +9,6 @@ services:
     image: mariadb:latest
     networks:
       - drupal
-#    ports:
-#      - "3306:3306"
     volumes:
       - ./volumes/mysql:/var/lib/mysql
     environment:
@@ -20,18 +18,10 @@ services:
       MYSQL_PASSWORD: drupal
 
   drupal:
-    image: drupal:latest
+    image: 0lfi/drupal:latest
     networks:
       - drupal
     ports:
       - "8080:80"
     volumes:
-      - ./volumes/html/modules:/var/www/html/modules
-      - ./volumes/html/profiles:/var/www/html/profiles
-      - ./volumes/html/sites:/var/www/html/sites
-      - ./volumes/html/themes:/var/www/html/themes
-    environment:
-      MYSQL_ROOT_PASSWORD: somedrupal
-      MYSQL_DATABASE: drupal
-      MYSQL_USER: drupal
-      MYSQL_PASSWORD: drupal
+      - ./volumes/drupal:/srv/drupal
