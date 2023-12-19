@@ -1,5 +1,8 @@
 #!/bin/sh
 
+project=/srv/drupal
+
+
 # remove the X-Powered-By header
 sed -e "s/expose_php = On/expose_php = Off/g" -i /etc/php81/php.ini
 
@@ -20,11 +23,11 @@ usermod -u $DRUPAL_USER -g $DRUPAL_USER drupal
 pass=$( N=16 ; cat /dev/urandom | tr -dc A-Za-z0-9 | head -c$N )
 printf "%s\n%s\n" $pass $pass | passwd drupal
 
-# create project if /srv/drupal does not exist
-if [ "$( ls /srv/drupal 2>/dev/null )" = "" ] ; then
-  mkdir -p /srv/drupal
-  chown $DRUPAL_USER:$DRUPAL_USER /srv/drupal
-  su drupal -c "composer create-project --no-interaction drupal/recommended-project /srv/drupal"
+# create project if $project does not exist
+if [ "$( ls $project 2>/dev/null )" = "" ] ; then
+  mkdir -p $project
+  chown $DRUPAL_USER:$DRUPAL_USER $project
+  su drupal -c "composer create-project --no-interaction drupal/recommended-project $project"
 fi
 
 # start php-fpm
