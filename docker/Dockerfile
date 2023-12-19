@@ -1,7 +1,10 @@
 FROM alpine:3.17.3
 
-ENV DRUPAL_USER  1000
-ENV LOG_FORMAT    main
+ENV DRUPAL_USER 1000
+ENV LOG_FORMAT  main
+
+COPY ./ng-default.conf      /etc/nginx/http.d/default.conf
+COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 RUN apk add --no-cache \
   ca-certificates \
@@ -34,14 +37,9 @@ RUN apk add --no-cache \
   php81-xmlwriter \
   php81-zip \
   php81-mysqlnd \
-  shadow
-
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod 755 /usr/local/bin/docker-entrypoint.sh
-
-COPY ./ng-default.conf /etc/nginx/http.d/default.conf
-
-RUN pass=$( N=16 ; cat /dev/urandom | tr -dc A-Za-z0-9 | head -c$N ) \
+  shadow \
+  && chmod 755 /usr/local/bin/docker-entrypoint.sh \
+  && pass=$( N=16 ; cat /dev/urandom | tr -dc A-Za-z0-9 | head -c$N ) \
   && printf "%s\n%s\n" $pass $pass | adduser drupal \
   && mkdir -p /srv/drupal \
   && chown drupal:drupal /srv/drupal
